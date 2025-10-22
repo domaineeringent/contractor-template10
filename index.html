@@ -441,7 +441,7 @@
             filter: drop-shadow(0 0 5px var(--color-accent));
         }
         .main-header__logo:hover svg { transform: rotate(360deg) scale(1.2); }
-        .main-nav__list { display: flex; list-style: none; gap: 2.5rem; }
+		.main-nav__list { display: flex; list-style: none; gap: 1.8rem; }
         .main-nav__link {
             font-family: var(--font-heading);
             text-decoration: none;
@@ -1137,25 +1137,30 @@
             .blog-post-card__image-container { height: 250px; }
             .contact-layout .contact-info { grid-row: 1; }
 
-            /* --- Elite Mobile Scroll Animations --- */
+            /* --- START: Elite Mobile Scroll Animations --- */
             .trust-bar__grid.is-visible .trust-item svg {
+                /* A playful, attention-grabbing wobble for trust icons */
                 animation: mobileIconWobble 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-                animation-delay: inherit; /* Inherit from stagger-children parent */
+                animation-delay: inherit; /* Inherits delay from stagger-children parent */
             }
             
             .services-grid.is-visible .service-card {
+                /* A subtle pulse and lift to make cards feel interactive */
                 animation: mobileCardPulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-                animation-delay: inherit;
+                animation-delay: inherit; /* Inherits delay from stagger-children parent */
             }
             
             .why-choose-us__image-wrapper.is-visible .why-choose-us__image-bg-shape {
+                /* A dimensional shift for the background shape, adding depth */
                 animation: mobileShapeShift 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s forwards;
             }
 
             .contact-info.is-visible .contact-info__item .contact-info__icon {
+                /* A quick pop to draw attention to contact methods */
                 animation: mobileIconPop 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-                animation-delay: inherit;
+                animation-delay: inherit; /* Inherits delay from stagger-children parent */
             }
+            /* --- END: Elite Mobile Scroll Animations --- */
         }
         
         @media (max-width: 768px) {
@@ -1171,6 +1176,115 @@
             .services-grid { grid-template-columns: 1fr; }
             .testimonial-card { padding: 2rem 1.5rem; }
             .testimonial-card__quote { font-size: 1.1rem; }
+
+            /* --- START: Protocol Mjolnir - Mobile Conversion Enhancements --- */
+
+            /* 1. Persistent Action Bar */
+            body {
+                /* Add padding to the bottom to prevent the CTA bar from overlapping footer content */
+                padding-bottom: 80px; 
+            }
+
+            .mobile-cta-bar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 80px;
+                background-color: var(--color-primary);
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 1001;
+                box-shadow: 0 -5px 20px rgba(0,0,0,0.25);
+                transform: translateY(100%);
+                animation: slideUp 0.5s 0.5s ease-out forwards;
+                border-top: 3px solid var(--color-secondary);
+            }
+            
+            @keyframes slideUp {
+                to { transform: translateY(0); }
+            }
+
+            .mobile-cta-bar a {
+                flex: 1;
+                text-align: center;
+                text-decoration: none;
+                color: var(--color-white);
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: var(--font-heading);
+                font-size: 1.1rem;
+                text-transform: uppercase;
+                transition: background-color var(--transition-speed-fast);
+            }
+
+            .mobile-cta-bar__phone {
+                background-color: var(--color-secondary);
+                gap: 0.75rem;
+            }
+            .mobile-cta-bar__phone:active {
+                background-color: var(--color-secondary-dark);
+            }
+
+            .mobile-cta-bar__quote {
+                background-color: var(--color-accent);
+                font-weight: 700;
+            }
+            .mobile-cta-bar__quote:active {
+                background-color: var(--color-accent-hover);
+            }
+
+            /* 2. Above-the-Fold Supremacy */
+            .hero .container {
+                min-height: 450px; /* Reduce height slightly for smaller screens */
+            }
+            .hero__title {
+                font-size: clamp(2.5rem, 9vw, 3rem); /* Make title larger and more responsive */
+                line-height: 1.1;
+                text-shadow: 2px 2px 15px rgba(0,0,0,0.7);
+            }
+            .hero__subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 2rem;
+            }
+            .hero__cta-group {
+                flex-direction: column; /* Stack buttons vertically */
+                align-items: center;
+                gap: 1rem;
+            }
+            .hero__cta-group .btn {
+                width: 100%;
+                max-width: 350px; /* Constrain button width */
+                font-size: 1.2rem;
+                padding: 1.1rem 2rem;
+            }
+            
+            /* 3. Enhanced Tactile Feedback */
+            .service-card, .contact-info__item, .blog-post-card {
+                transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+            .service-card:active, .contact-info__item:active, .blog-post-card:active {
+                transform: scale(0.97); /* Provides a satisfying "push" effect on tap */
+            }
+
+            /* 4. Contact Form Optimization */
+            .contact-form .form-control {
+                padding: 1.5rem 1.2rem 0.8rem 1.2rem; /* Increase padding for larger tap targets */
+                font-size: 1.1rem; /* Increase font size for better readability */
+            }
+            .contact-form .form-control:focus {
+                /* Make the focus state more pronounced on mobile */
+                box-shadow: 0 0 0 4px rgba(0, 169, 157, 0.35);
+            }
+            .contact-form button[type="submit"].btn {
+                padding: 1.2rem;
+                font-size: 1.2rem;
+            }
+            
+            /* --- END: Protocol Mjolnir --- */
         }
     </style>
 </head>
@@ -1190,7 +1304,7 @@
                 <ul class="main-nav__list">
                     <li><a href="#home" class="main-nav__link is-active" data-view="view-home">Home</a></li>
                     <li><a href="#services" class="main-nav__link" data-view="view-services">Services</a></li>
-                    <li><a href="#about" class="main-nav__link" data-view="view-about">About Us</a></li>
+					<li><a href="#about" class="main-nav__link" data-view="view-about">About</a></li>
                     <li><a href="#blog" class="main-nav__link" data-view="view-blog">Blog</a></li>
                     <li><a href="#contact" class="main-nav__link" data-view="view-contact">Contact</a></li>
                 </ul>
@@ -1804,6 +1918,18 @@
             </div>
         </div>
     </footer>
+
+    <!-- START: Protocol Mjolnir - Mobile CTA Bar -->
+    <div class="mobile-cta-bar">
+        <a href="tel:1-800-555-1234" class="mobile-cta-bar__phone">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span>Call Now</span>
+        </a>
+        <a href="#contact" data-view="view-contact" class="mobile-cta-bar__quote">
+            Schedule Service
+        </a>
+    </div>
+    <!-- END: Protocol Mjolnir -->
 
     <script>
         // 1. DATA & CONSTANT DECLARATION
