@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apex Services | Your City's #1 Rated Local Service Provider</title>
     <meta name="description" content="Apex Services provides elite, 24/7 emergency service for all your needs. Licensed, insured, and committed to absolute customer satisfaction. Get your free, no-obligation quote now!">
+    <!-- PERFORMANCE FIX: Preload the LCP hero image for mobile with high priority -->
+    <link rel="preload" fetchpriority="high" as="image" href="https://images.unsplash.com/photo-1689476814887-43b4a7dc34e8?auto=format&fit=crop&q=50&w=800" type="image/jpeg">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏆</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -220,18 +222,17 @@
             70% { transform: scale(1.05) rotate(4deg); }
             100% { transform: scale(1.1) rotate(0deg); }
         }
+        /* PERFORMANCE FIX: Removed box-shadow animation which is very expensive for mobile CPUs.
+           The transform alone provides enough visual feedback. */
         @keyframes mobileCardPulse {
             0% {
                 transform: translateY(0);
-                box-shadow: var(--shadow-md);
             }
             50% {
                 transform: translateY(-12px);
-                box-shadow: var(--shadow-xl);
             }
             100% {
                 transform: translateY(0);
-                box-shadow: var(--shadow-md);
             }
         }
         @keyframes mobileShapeShift {
@@ -1852,7 +1853,7 @@
                             </div>
                             <div class="contact-info__item">
                                 <div class="contact-info__icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0 1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                                 </div>
                                 <div>
                                     <h3 class="contact-info__title">General Inquiries</h3>
