@@ -570,9 +570,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(15deg, rgba(10,37,64,0.3) 0%, rgba(10,37,64,0.8) 100%), url('https://images.unsplash.com/photo-1689476814887-43b4a7dc34e8?auto=format&fit=crop&q=30&w=1920') no-repeat center center/cover;
+            /* Mobile-first, smaller image */
+            background: linear-gradient(15deg, rgba(10,37,64,0.3) 0%, rgba(10,37,64,0.8) 100%), url('https://images.unsplash.com/photo-1689476814887-43b4a7dc34e8?auto=format&fit=crop&q=50&w=800') no-repeat center center/cover;
             z-index: 1;
             animation: kenBurns 25s ease-in-out infinite alternate;
+        }
+        @media (min-width: 768px) {
+            .hero::before {
+                /* Larger image for desktop */
+                background-image: linear-gradient(15deg, rgba(10,37,64,0.3) 0%, rgba(10,37,64,0.8) 100%), url('https://images.unsplash.com/photo-1689476814887-43b4a7dc34e8?auto=format&fit=crop&q=40&w=1920');
+            }
         }
         .hero__particles {
             position: absolute;
@@ -1116,8 +1123,6 @@
                 box-shadow: -10px 0 30px rgba(0,0,0,0.3);
             }
             .main-nav.is-open { right: 0; }
-            /* --- CORRECTED RULE BELOW --- */
-            /* The selector was changed from '.main-nav.is-open .main-nav__list' to '.main-nav .main-nav__list' */
             .main-nav .main-nav__list { flex-direction: column; gap: 2rem; text-align: center; }
             .main-nav.is-open .main-nav__link { color: var(--color-white); font-size: 2rem; }
             .hero__content { max-width: 100%; text-align: center; }
@@ -1750,7 +1755,7 @@
                                 </div>
                             </div>
                             <div class="contact-map">
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3354.214041763135!2d-96.7993092848174!3d32.7830602809715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864e992b45e1d3c3%3A0x8c8f5f6b2d2f7f9!2sDallas%2C%20TX!5e0!3m2!1sen!2sus!4v1635358085440!5m2!1sen!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                                <iframe src="about:blank" data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3354.214041763135!2d-96.7993092848174!3d32.7830602809715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864e992b45e1d3c3%3A0x8c8f5f6b2d2f7f9!2sDallas%2C%20TX!5e0!3m2!1sen!2sus!4v1635358085440!5m2!1sen!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                             </div>
                         </div>
                     </div>
@@ -2003,13 +2008,34 @@
             animateParticles();
         }
 
+        function lazyLoadMap() {
+            const mapFrame = document.querySelector('.contact-map iframe');
+            if (!mapFrame || !mapFrame.dataset.src) return;
+
+            const mapObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        mapFrame.src = mapFrame.dataset.src;
+                        observer.unobserve(mapFrame);
+                    }
+                });
+            }, { rootMargin: '200px' }); // Load when 200px away from viewport
+
+            mapObserver.observe(mapFrame);
+        }
+
         function init() {
             handleHeaderHeight();
             handleHeaderScroll();
             
             showView('view-home');
             setupTestimonialSlider();
-            setupHeroParticles();
+            lazyLoadMap();
+
+            // Conditionally load performance-intensive scripts
+            if (window.matchMedia("(min-width: 768px)").matches) {
+                setupHeroParticles();
+            }
 
             setupScrollAnimationsForView(document.getElementById('view-home'));
             
