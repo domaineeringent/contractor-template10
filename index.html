@@ -7,15 +7,9 @@
     <meta name="description" content="Apex Services provides elite, 24/7 emergency service for all your needs. Licensed, insured, and committed to absolute customer satisfaction. Get your free, no-obligation quote now!">
 
     <!--
-      STRATEGIC FONT LOADING PROTOCOL: VERIFIED & FINAL
-      This is the Google-recommended method for loading fonts without blocking page render, ensuring top performance metrics.
+      STRATEGIC FONT PROTOCOL: Reverted to high-performance System Font Stack.
+      All external font loading has been removed from this file to guarantee stability and speed.
     -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;500;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;500;700&display=swap">
-    </noscript>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏆</text></svg>">
     
@@ -26,8 +20,13 @@
             --color-secondary: #00A99D; --color-secondary-dark: #008a7e; --color-accent: #F95738;
             --color-accent-hover: #E84828; --color-light: #F7FAFC; --color-white: #FFFFFF;
             --color-dark: #1A202C; --color-text: #2D3748; --color-text-light: #718096;
-            --color-border: #E2E8F0; --color-gold: #FFC107; --font-heading: 'Oswald', sans-serif;
-            --font-body: 'Roboto', sans-serif; --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --color-border: #E2E8F0; --color-gold: #FFC107; 
+            
+            /* FONT MODIFICATION: Replaced custom fonts with a high-quality system font stack for max performance. */
+            --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -951,8 +950,9 @@
             const template = document.getElementById('non-critical-styles');
             if (template) {
                 const styleElement = document.createElement('style');
-                styleElement.innerHTML = template.innerHTML;
+                styleElement.innerHTML = template.content.firstElementChild.innerHTML;
                 document.head.appendChild(styleElement);
+                template.remove(); // Clean up the DOM
             }
         }
         
@@ -990,9 +990,18 @@
             const targetView = document.getElementById(viewId);
             const currentView = document.getElementById(activeViewId);
 
-            if (!targetView || viewId === activeViewId) {
+            if (!targetView) return;
+
+            // Handle case where link points to the already active view, but has a focus target
+            if (viewId === activeViewId) {
                 if(document.body.classList.contains('nav-open')) {
                     toggleMobileNav();
+                }
+                if (focusTargetSelector) {
+                    const focusEl = targetView.querySelector(focusTargetSelector);
+                    if (focusEl) {
+                        focusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 }
                 return;
             }
@@ -1031,8 +1040,14 @@
                 // Load lazy images for the new view
                 const imagesToLoad = targetView.querySelectorAll('img[data-src]');
                 imagesToLoad.forEach(img => {
-                    img.setAttribute('src', img.getAttribute('data-src'));
+                    img.src = img.dataset.src;
                     img.removeAttribute('data-src');
+                });
+
+                const mapsToLoad = targetView.querySelectorAll('iframe[data-src]');
+                mapsToLoad.forEach(map => {
+                    map.src = map.dataset.src;
+                    map.removeAttribute('data-src');
                 });
                 
                 viewContainer.style.opacity = '1';
@@ -1043,9 +1058,9 @@
         function handleNavClick(event) {
             event.preventDefault();
             const viewId = event.currentTarget.dataset.view;
-            const focusTarget = event.currentTarget.dataset.focusTarget; // Add this line
+            const focusTarget = event.currentTarget.dataset.focusTarget;
             if (viewId) {
-                showView(viewId, focusTarget); // Pass the target here
+                showView(viewId, focusTarget);
             }
         }
         
@@ -1174,29 +1189,11 @@
             animateParticles();
         }
 
-        function lazyLoadMap() {
-            const mapFrame = document.querySelector('.contact-map iframe');
-            if (!mapFrame || !mapFrame.dataset.src) return;
-
-            const mapObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        mapFrame.src = mapFrame.dataset.src;
-                        observer.unobserve(mapFrame);
-                    }
-                });
-            }, { rootMargin: '200px' }); // Load when 200px away from viewport
-
-            mapObserver.observe(mapFrame);
-        }
-
         function init() {
             handleHeaderHeight();
             handleHeaderScroll();
             
-            showView('view-home');
             setupTestimonialSlider();
-            lazyLoadMap();
 
             // Conditionally load performance-intensive scripts
             if (window.matchMedia("(min-width: 768px)").matches) {
