@@ -19,7 +19,11 @@
             --color-primary: #0A2540; --color-primary-dark: #071c31; --color-primary-light: #1e3a5a;
             --color-secondary: #00A99D; --color-secondary-dark: #008a7e; --color-accent: #F95738;
             --color-accent-hover: #E84828; --color-light: #F7FAFC; --color-white: #FFFFFF;
-            --color-dark: #1A202C; --color-text: #2D3748; --color-text-light: #718096;
+            --color-dark: #1A202C; --color-text: #2D3748; 
+            /* ACCESSIBILITY PATCH: Increased contrast for light text to meet WCAG AA standards. */
+            --color-text-light: #5A6872;
+            /* ACCESSIBILITY PATCH: Added a higher-contrast color for links against light backgrounds. */
+            --color-link-accent: #C8391E;
             --color-border: #E2E8F0; --color-gold: #FFC107; 
             
             /* FONT MODIFICATION: Replaced custom fonts with a high-quality system font stack for max performance. */
@@ -54,7 +58,8 @@
         .site-footer { flex-shrink: 0; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 87, 56, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(249, 87, 56, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 87, 56, 0); } }
+        /* PERFORMANCE PATCH: Removed box-shadow from the keyframe animation. This property causes repaints and is not GPU-accelerated (composited). The scaling provides a sufficient visual cue. */
+        @keyframes pulse { 0% { transform: scale(1); } 70% { transform: scale(1.05); } 100% { transform: scale(1); } }
         @keyframes kenBurns { 0% { transform: scale(1.1) translate(0, 0); } 100% { transform: scale(1.25) translate(-2%, 1%); } }
         .container { width: 100%; max-width: var(--container-width); margin-left: auto; margin-right: auto; padding: 0 1.5rem; }
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
@@ -168,8 +173,9 @@
         .service-card__content { padding: 2rem 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
         .service-card__title { font-family: var(--font-heading); font-size: 1.7rem; color: var(--color-primary); margin-bottom: 0.5rem; }
         .service-card__excerpt { margin-bottom: 1.5rem; flex-grow: 1; color: var(--color-text-light); line-height: 1.7; }
-        .service-card__link { font-family: var(--font-heading); color: var(--color-accent); text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; align-self: flex-start; padding: 0.5rem 1rem 0.5rem 0; position: relative; }
-        .service-card__link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--color-accent); transition: width var(--transition-speed) ease; }
+        /* ACCESSIBILITY PATCH: Using higher-contrast color for this link. */
+        .service-card__link { font-family: var(--font-heading); color: var(--color-link-accent); text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; align-self: flex-start; padding: 0.5rem 1rem 0.5rem 0; position: relative; }
+        .service-card__link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--color-link-accent); transition: width var(--transition-speed) ease; }
         .service-card:hover .service-card__link::after { width: 100%; }
         .service-card__link svg { margin-left: 0.5rem; transition: transform var(--transition-speed) ease; }
         .service-card:hover .service-card__link svg { transform: translateX(8px); }
@@ -333,10 +339,11 @@
     <main id="view-container">
         <section class="view is-active" id="view-home">
             <section class="hero" id="hero-section">
-                <!-- PERFORMANCE FIX: LCP image is now an <img> tag with fetchpriority for fastest loading -->
+                <!-- PERFORMANCE PATCH: Added webp <source> for modern browsers, optimizing LCP. -->
                 <picture class="hero-background-image">
-                    <source media="(min-width: 768px)" srcset="https://images.unsplash.com/photo-1689476814887-43b4a7dc34e8?auto=format&fit=crop&q=40&w=1920">
-                    <img src="https://images.unsplash.com/photo-1689476814887-43b4a7dc34e8?auto=format&fit=crop&q=50&w=800"
+                    <source type="image/webp" media="(min-width: 768px)" srcset="https://images.unsplash.com/photo-1689476814887-43b4a7dc34e8?auto=format&fit=crop&fm=webp&q=40&w=1920">
+                    <source media="(min-width: 768px)" srcset="https://images.unsplash.com/photo-1689476814887-43b4a7dc34e8?auto=format&fit=crop&q=60&w=1920">
+                    <img src="https://images.unsplash.com/photo-1689476814887-43b4a7dc34e8?auto=format&fit=crop&q=60&w=800"
                          alt="Clean and modern interior of a well-maintained home"
                          fetchpriority="high"
                          decoding="async">
@@ -356,6 +363,8 @@
             </section>
             <section class="trust-bar">
                 <div class="container">
+                    <!-- ACCESSIBILITY PATCH: Added a visually hidden h2 for section hierarchy. -->
+                    <h2 class="sr-only">Our Core Promises</h2>
                     <div class="trust-bar__grid animate-on-scroll stagger-children fade-in-up">
                         <div class="trust-item">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
@@ -526,6 +535,8 @@
             </section>
             <section class="section-padding">
                 <div class="container">
+                    <!-- ACCESSIBILITY PATCH: Added a visually hidden h2 for section hierarchy. -->
+                    <h2 class="sr-only">All Professional Services</h2>
                     <div class="services-grid animate-on-scroll stagger-children fade-in-up">
                             <a href="#contact" class="service-card" data-view="view-contact">
                             <div class="service-card__image-container">
@@ -661,49 +672,53 @@
             <section class="section-padding">
                 <div class="container">
                     <div class="blog-layout">
-                        <main class="blog-posts-list animate-on-scroll stagger-children fade-in-up">
-                            <article class="blog-post-card">
-                                <a href="#pillar" data-view="view-pillar" class="blog-post-card__image-container">
-                                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://images.unsplash.com/photo-1505695715220-3a366d958259?auto=format&fit=crop&q=30&w=800" alt="Water heater with visible signs of rust" class="blog-post-card__image" width="600" height="600">
-                                </a>
-                                <div class="blog-post-card__content">
-                                    <p class="blog-post-card__category">Plumbing</p>
-                                    <h2 class="blog-post-card__title"><a href="#pillar" data-view="view-pillar">5 Signs Your Water Heater is About to Fail</a></h2>
-                                    <p class="blog-post-card__meta">By John Doe | Published on: Oct 26, 2023</p>
-                                    <p class="blog-post-card__excerpt">Don't get caught in a cold shower. Learn the tell-tale signs of a failing water heater and know when it's time to call in the professionals for a repair or replacement.</p>
-                                    <a href="#pillar" data-view="view-pillar" class="service-card__link">Read More
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        <main>
+                            <!-- ACCESSIBILITY PATCH: Added a visually hidden h2 for section hierarchy. -->
+                            <h2 class="sr-only">Latest Blog Articles</h2>
+                            <div class="blog-posts-list animate-on-scroll stagger-children fade-in-up">
+                                <article class="blog-post-card">
+                                    <a href="#pillar" data-view="view-pillar" class="blog-post-card__image-container">
+                                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://images.unsplash.com/photo-1505695715220-3a366d958259?auto=format&fit=crop&q=30&w=800" alt="Water heater with visible signs of rust" class="blog-post-card__image" width="600" height="600">
                                     </a>
-                                </div>
-                            </article>
-                            <article class="blog-post-card">
-                                <a href="#pillar" data-view="view-pillar" class="blog-post-card__image-container">
-                                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://images.unsplash.com/photo-1709432767122-d3cb5326911a?auto=format&fit=crop&q=30&w=800" alt="Dirty vs clean air conditioner filters" class="blog-post-card__image" width="600" height="600">
-                                </a>
-                                <div class="blog-post-card__content">
-                                    <p class="blog-post-card__category">HVAC</p>
-                                    <h2 class="blog-post-card__title"><a href="#pillar" data-view="view-pillar">How Often Should You Really Change Your AC Filter?</a></h2>
-                                    <p class="blog-post-card__meta">By Jane Smith | Published on: Oct 15, 2023</p>
-                                    <p class="blog-post-card__excerpt">It's one of the simplest maintenance tasks, but one of the most important for your HVAC system's health and efficiency. We break down the ideal schedule for your home.</p>
-                                    <a href="#pillar" data-view="view-pillar" class="service-card__link">Read More
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                    <div class="blog-post-card__content">
+                                        <p class="blog-post-card__category">Plumbing</p>
+                                        <h3 class="blog-post-card__title"><a href="#pillar" data-view="view-pillar">5 Signs Your Water Heater is About to Fail</a></h3>
+                                        <p class="blog-post-card__meta">By John Doe | Published on: Oct 26, 2023</p>
+                                        <p class="blog-post-card__excerpt">Don't get caught in a cold shower. Learn the tell-tale signs of a failing water heater and know when it's time to call in the professionals for a repair or replacement.</p>
+                                        <a href="#pillar" data-view="view-pillar" class="service-card__link">Read More
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                        </a>
+                                    </div>
+                                </article>
+                                <article class="blog-post-card">
+                                    <a href="#pillar" data-view="view-pillar" class="blog-post-card__image-container">
+                                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://images.unsplash.com/photo-1709432767122-d3cb5326911a?auto=format&fit=crop&q=30&w=800" alt="Dirty vs clean air conditioner filters" class="blog-post-card__image" width="600" height="600">
                                     </a>
-                                </div>
-                            </article>
-                            <article class="blog-post-card">
-                                <a href="#pillar" data-view="view-pillar" class="blog-post-card__image-container">
-                                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://images.unsplash.com/photo-1695414303327-991703ace610?auto=format&fit=crop&q=30&w=800" alt="A GFCI outlet in a bathroom" class="blog-post-card__image" width="600" height="600">
-                                </a>
-                                <div class="blog-post-card__content">
-                                    <p class="blog-post-card__category">Electrical</p>
-                                    <h2 class="blog-post-card__title"><a href="#pillar" data-view="view-pillar">GFCI Outlets: What Are They and Where Do You Need Them?</a></h2>
-                                    <p class="blog-post-card__meta">By Mike Williams | Published on: Sep 30, 2023</p>
-                                    <p class="blog-post-card__excerpt">This crucial safety device can prevent serious electrical shocks. Learn how GFCI outlets work and ensure your home is up to the latest safety codes.</p>
-                                    <a href="#pillar" data-view="view-pillar" class="service-card__link">Read More
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                    <div class="blog-post-card__content">
+                                        <p class="blog-post-card__category">HVAC</p>
+                                        <h3 class="blog-post-card__title"><a href="#pillar" data-view="view-pillar">How Often Should You Really Change Your AC Filter?</a></h3>
+                                        <p class="blog-post-card__meta">By Jane Smith | Published on: Oct 15, 2023</p>
+                                        <p class="blog-post-card__excerpt">It's one of the simplest maintenance tasks, but one of the most important for your HVAC system's health and efficiency. We break down the ideal schedule for your home.</p>
+                                        <a href="#pillar" data-view="view-pillar" class="service-card__link">Read More
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                        </a>
+                                    </div>
+                                </article>
+                                <article class="blog-post-card">
+                                    <a href="#pillar" data-view="view-pillar" class="blog-post-card__image-container">
+                                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://images.unsplash.com/photo-1695414303327-991703ace610?auto=format&fit=crop&q=30&w=800" alt="A GFCI outlet in a bathroom" class="blog-post-card__image" width="600" height="600">
                                     </a>
-                                </div>
-                            </article>
+                                    <div class="blog-post-card__content">
+                                        <p class="blog-post-card__category">Electrical</p>
+                                        <h3 class="blog-post-card__title"><a href="#pillar" data-view="view-pillar">GFCI Outlets: What Are They and Where Do You Need Them?</a></h3>
+                                        <p class="blog-post-card__meta">By Mike Williams | Published on: Sep 30, 2023</p>
+                                        <p class="blog-post-card__excerpt">This crucial safety device can prevent serious electrical shocks. Learn how GFCI outlets work and ensure your home is up to the latest safety codes.</p>
+                                        <a href="#pillar" data-view="view-pillar" class="service-card__link">Read More
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                        </a>
+                                    </div>
+                                </article>
+                            </div>
                         </main>
                         <aside class="sidebar animate-on-scroll fade-in-up" style="transition-delay: 0.2s;">
                             <div class="sidebar-widget">
@@ -893,6 +908,8 @@
 
     <footer id="site-footer" class="site-footer">
         <div class="container">
+            <!-- ACCESSIBILITY PATCH: Added a visually hidden h2 for footer landmark hierarchy. -->
+            <h2 class="sr-only">Footer</h2>
             <div class="footer-grid">
                 <div class="footer-column">
                     <h3 class="footer-column__title">Apex Services</h3>
